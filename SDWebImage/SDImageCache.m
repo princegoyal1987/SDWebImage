@@ -174,6 +174,20 @@ FOUNDATION_STATIC_INLINE NSUInteger SDCacheCostForImage(UIImage *image) {
 
 #pragma mark SDImageCache (private)
 
+
+-(NSString *) getValidExtension:(NSString *)filePath {
+    NSString *extension = [filePath pathExtension];
+    if(extension==nil)
+        return nil;
+    
+    NSArray *validExtensions = @[@"png",@"jpg",@"jpeg",@"gif"];
+    for(NSString *validExtension in validExtensions) {
+        if([extension isEqualToString:validExtension])
+            return extension;
+    }
+    return nil;
+}
+
 - (NSString *)cachedFileNameForKey:(NSString *)key {
     const char *str = [key UTF8String];
     if (str == NULL) {
@@ -181,8 +195,18 @@ FOUNDATION_STATIC_INLINE NSUInteger SDCacheCostForImage(UIImage *image) {
     }
     unsigned char r[CC_MD5_DIGEST_LENGTH];
     CC_MD5(str, (CC_LONG)strlen(str), r);
-    NSString *filename = [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-                                                    r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], r[14], r[15]];
+    
+    NSString *extension = [self getValidExtension:key];
+    
+    NSString *filename = nil;
+    if(extension!=nil) {
+    filename = [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x.%@",
+                                                    r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], r[14], r[15],
+                          [key pathExtension]];
+    } else {
+        filename = [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+                              r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], r[14], r[15]];
+    }
 
     return filename;
 }

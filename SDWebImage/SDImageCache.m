@@ -178,9 +178,9 @@ FOUNDATION_STATIC_INLINE NSUInteger SDCacheCostForImage(UIImage *image) {
 -(NSString *) getValidExtension:(NSString *)filePath {
     NSString *extension = nil;
     if ([filePath rangeOfString:@"?"].location == NSNotFound) {
-        filePath = [filePath pathExtension];
+        extension = [filePath pathExtension];
     } else {
-        filePath = [[filePath substringToIndex:[filePath rangeOfString:@"?"].location] pathExtension];
+        extension = [[filePath substringToIndex:[filePath rangeOfString:@"?"].location] pathExtension];
     }
     
     if(extension==nil)
